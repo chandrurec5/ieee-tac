@@ -376,7 +376,7 @@ is obtained by adding the linear constraints $J = \sum_{i=1}^k r_i \phi_i$ to th
 As noted by \citet{SchSei85}, the linear program is feasible as long as $\one$, defined as the vector with all components being identically equal to one, is in the span of $\{\phi_1,\dots,\phi_k\}$.
 \emph{For the purpose of computations, it is assumed that the values $c^\top \phi_i$, $i=1,\dots, k$ and the values $(P_a \phi_i)(s)$ and $g_a(s)$ can be accessed in constant time.}
 This assumption can be relaxed to assuming that one can access $g_a(s)$ and $\phi_i(s)$ for any $(s,a)$ in constant time, as well as to that one can efficiently sample from $c$, from $P_a(s,\cdot)$ for any $(s,a)$ pair,
-but the details of this are the beyond the scope of the present work. As shown by \citet{ALP}, if $\ralp$ denotes the solution to the above ALP then for $\Jalp \doteq \sum_i \ralp(i) \phi_i \doteq \Phi \ralp$ it holds that $\norm{\Jalp - J^*}_{1,c} \le \frac{2 \epsilon}{1-\alpha}$, where $\epsilon = \inf_r \norm{ J^* - \Phi r }_\infty$ is the error of approximating the optimal value with the span of the basis functions $\phi_1,\dots,\phi_k$ and $\norm{J}_\infty = \max_s |J(s)|$ is the maximum norm and $\Phi \in \Re^{S\times k}$ is the matrix formed by $(\phi_1,\dots,\phi_k)$. That the error of approximating $J^*$ with $\Jalp$ is $O(\epsilon)$ is significant: The user can focus on finding a good basis, leaving the search for the ``right'' coefficients to a linear program solver.
+but the details of this are the beyond the scope of the present work. As shown by \citet{ALP}, if $\ralp$ denotes the solution to the above ALP then for $\Jalp \doteq \sum_i \ralp(i) \phi_i \doteq \Phi \ralp$ it holds that $\norm{\Jalp - J^*}_{1,c} \le \frac{2 \epsilon}{1-\alpha}$ provided $c^\top 1 = 1$ and where $\epsilon = \inf_r \norm{ J^* - \Phi r }_\infty$ is the error of approximating the optimal value with the span of the basis functions $\phi_1,\dots,\phi_k$ and $\norm{J}_\infty = \max_s |J(s)|$ is the maximum norm and $\Phi \in \Re^{S\times k}$ is the matrix formed by $(\phi_1,\dots,\phi_k)$. That the error of approximating $J^*$ with $\Jalp$ is $O(\epsilon)$ is significant: The user can focus on finding a good basis, leaving the search for the ``right'' coefficients to a linear program solver.
 
 While solving the ALP can be significantly cheaper than solving the LP underlying the MDP
 and thus it can be advantageous for moderate-scale MDPs,
@@ -396,7 +396,7 @@ Note that this results in a linear program with $k$ variables and $m$ constraint
 \begin{align}\label{grlp}
 \begin{split}
 &\underset{r\in \Re^k}{\min}\, \, c^\top \Phi r\\
-&\text{s.t.}\mb  \,\sum_a W_a^\top \Phi r\geq \sum_a W_a^\top (g_a + \alpha P_a) \Phi r\,,
+&\text{s.t.}\mb  \,\sum_a W_a^\top \Phi r\geq \sum_a W_a^\top (g_a + \alpha P_a \Phi r)\,,
 \end{split}
 \end{align}
 where $W_a = (w_{1,a},\dots,w_{m,a}) \in \Re_+^{S \times m}$.
@@ -435,11 +435,11 @@ all the knowledge that makes the LP bounded.
 }
 
 Further insight into the choice of $W$ can be gained by
-considering the Lagrangians of the ALP and LRALP. To write both LP's in a similar form let us introduce $E = (I_{S\times S},\dots,I_{S\times S})^\top$, where $I_{S\times S}$ is the $S\times S$ identity matrix. Further, let $H:\Re^S \to \Re^{SA}$ be the operator defined by $(HJ)^\top = ( (T_1 J)^\top, \dots, (T_A J)^\top )$. Note that $H$ is a linear operator, which we call the \emph{linear Bellman operator}.
+considering the Lagrangians of the ALP and LRALP. To write both LP's in a similar form let us introduce $E = (I_{S\times S},\dots,I_{S\times S})^\top$, where $I_{S\times S}$ is the $S\times S$ identity matrix. Further, let $H:\Re^S \to \Re^{SA}$ be the operator defined by $(HJ)^\top = ( (T_1 J)^\top, \dots, (T_A J)^\top )$. Note that $H$ is an affine linear operator, which we call the \emph{linear Bellman operator}.
 Then, the ALP can be written as $\min\{ c^\top \Phi r \,|\, E \Phi r \ge H \Phi r \}$, while LRALP takes the form
 $\min\{ c^\top \Phi r \,|\, W^\top E \Phi r \ge W^\top H \Phi r \}$.
-Hence, their Lagrangians are $\mathcal{L}_{\alp}(r,\lambda) = c^\top \Phi r+\lambda^\top (H\Phi r-E\Phi r)$
-$\mathcal{L}_{\lralp}(r,q) = c^\top \Phi r+q^\top W^\top (H\Phi r-E\Phi r)$. Thus, we can view $W q$ as a ``linear approximation''
+Hence, their Lagrangians are $\mathcal{L}_{\alp}(r,\lambda) = c^\top \Phi r+\lambda^\top (H\Phi r-E\Phi r)$ and
+$\mathcal{L}_{\lralp}(r,q) = c^\top \Phi r+q^\top W^\top (H\Phi r-E\Phi r)$, respectively. Thus, we can view $W q$ as a ``linear approximation''
 to the dual variable $\lambda \in \Re_+^{SA}$.
 This suggests that perhaps $W$ should be chosen such that it approximates well the optimal dual variable.
 If $\Phi$ spans $\Re^{S}$, the optimal dual variable $\lambda^*$ is known to be the discounted occupancy measure underlying the optimal policy (Theorem 3.18, \cite{Kall17}), suggesting that the role of $W$ is very similar to the role of $\Phi$ excepts that the subspace spanned by the columns of $W$ should ideally be close to $\lambda^*$.
@@ -540,7 +540,7 @@ The outer lightly shaded region corresponds to GRLP constraints and the inner da
 Assume that $c\in \Re_+^S$ is such that $1^\top c = 1$ and that $W \in \Re_+^{SA\times m}$ is nonnegative valued.
 Let $\psi\in \Re_+^S$ be in the column span of $\Phi$ and assume that the $\alpha$-discounted stability coefficient of $\psi$ is $\beta_\psi<1$. 
 Let $\eps = \inf_{r\in \Re^k}\norm{J^*-\Phi r}_{\infty,\psi}$ 
-be the error of approximation $J^*$ using the basis functions in $\Phi$.
+be the error of approximating $J^*$ using the basis functions in $\Phi$.
 Then,
 \begin{align*}
 \norm{J^*-\hj}_{1,c} \leq 
