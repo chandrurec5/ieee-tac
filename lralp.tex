@@ -67,10 +67,10 @@ Abuetal15:MDPWireless,
 BouDi17:MDPPractice}).
 In this paper we adopt the framework of discrete-time, discounted MDPs when
 a controller steers the stochastically evolving state of a system while receiving
-rewards that depends on the states visited and actions chosen. The goal is to choose the actions so as to maximize the \emph{return}, defined as the total discounted expected reward. A controller that uses past state information is called a \emph{policy}. An \emph{optimal policy} is one that maximizes the value no matter where the process is started from \cite{Puter}.
+rewards that depend on the states visited and actions chosen. The goal is to choose the actions so as to maximize the \emph{return}, defined as the total discounted expected reward. A controller that uses past state information is called a \emph{policy}. An \emph{optimal policy} is one that maximizes the value no matter where the process is started from \cite{Puter}.
 In this paper we consider planning problems where the goal is to calculate actions of policies that give rise to high values
 and give new error bounds on the quality of solutions obtained by solving linear programs of tractable size.
-To explain the contributions in more details, we start by describing the computational challenges involved in planning.
+To explain the contributions in more detail, we start by describing the computational challenges involved in planning.
 
 The main objective of \emph{planning} is to compute actions of an optimal policy while interacting with an MDP model.
 In finite state-action MDPs,
@@ -79,7 +79,7 @@ various algorithms are available to perform this computation in time and space t
 However, in most practical applications, the MDP is compactly represented
 and if it is not infinite, the number of states scale \emph{exponentially} with the \emph{size of the representation} of the MDP.
 %an effect that is known as \emph{Bellman's curse of dimensionality}.
-If planners are allowed to perform some fixed amount of calculations for each state encountered,
+If planners are allowed to perform some fixed number of calculations for each state encountered,
 it is possible to use sampling to make the per-state calculation-cost
 independent of the size of the state space \cite{rust96:randomization,szepesvari2001,kearns2002sparse}.
 \todoc{Maybe we can cite Mausam's book here as discussing a whole range of methods originating from AI
@@ -103,7 +103,7 @@ The idea is that, similarly to linear regression, a fixed sequence of basis func
 linearly. The user's task is to use a priori knowledge of the MDP
 to choose the basis functions so that
 a good approximation to the optimal value function will exist in the linear space spanned by the basis functions.
-The idea then is to design some algorithm to find the coefficients of the basis functions that gives a good approximation,
+The idea then is to design some algorithm to find the coefficients of the basis functions that give a good approximation,
 while keeping computation cost in check.
 Finding a good approximation is sufficient, since at the expense of an extra $O(1/\epsilon^2)$ randomized computation,
 a uniform $O(\epsilon)$-approximation
@@ -131,7 +131,7 @@ npalp,
 BhatFaMo12:SALPNP,
 abbasi}.
 The basic idea here is to combine a linear program whose solution is the optimal value function (and thus the number of optimization variables in it scales with the number of states) with a linear constraint that restricts the optimization variables to lie in the subspace spanned by the basis functions. As already noted by \citet{SchSei85}, the new LP can still be kept feasible by just adding one special basis function, while by substituting the ``value function candidates'' with their linear expansions, the number of optimization variables becomes the number of basis functions.
-As shown by \citet{ALP}, the solution to the resulting LP is within a constant factor of the best approximation to the optimal value function within the span of the chosen bases. However, since the number of constraints in the LP is still proportional to the number of states, it is not obvious whether a solution to the resulting LP can be found in time independent of the number of states (other computations can be done in time independent of the number of states, e.g., using sampling, at the price of a controlled increase of the error, e.g., Theorem 6 of \citep{petrik}).
+As shown by \citet{ALP}, the solution to the resulting LP is within a constant factor of the best approximation to the optimal value function within the span of the chosen bases. However, since the number of constraints in the LP is still proportional to the number of states, it is not obvious whether a solution to the resulting LP can be found in time independent of the number of states (other computations can be done in time independent of the number of states, e.g., using sampling, at the price of a controlled increase in the error, see e.g., Theorem 6 of \citep{petrik}).
 
 Most of the literature is thus devoted to designing methods to select a tractable subset of the constraints while keeping the approximation guarantees, as well as keeping computations tractable.
 Since a linear objective is optimized by a point on the boundary of the feasible region,
@@ -152,13 +152,13 @@ For constraint sampling,  \citet{CS} prove a bound on the suboptimality, but thi
 in the unrealistic scenario when the constraints are sampled from an \emph{idealized} distribution,
 which is related to the stationary distribution of an optimal policy.
 While it is possible to extend this result
-to any sampling distribution, the bound then scales with the mismatch between the sampling and the idealized
+to any sampling distribution, the bound scales with the mismatch between the sampling and the idealized
 distributions, which, in general, will be uncontrolled.
-Another weakness of the bound is related to that when constraints are dropped, the linear program may become
+Another weakness of the bound is that when constraints are dropped, the linear program may become
 unbounded. To prevent this, \citet{CS}  propose imposing an extra constraint on the optimization variables.
 The bound they obtain, however, scales with the \emph{worst approximation error} over this constraint set.
 While in a specific example it is shown that this error can be controlled, no general results are derived in this direction.
-Later works, such as that of
+Later works, such as of
 \citet{SALP,BhatFaMo12:SALPNP},  repeat the analysis of \citet{CS}
 in combinations with other ideas. However, no existing work that we know of addresses the above weaknesses of the result of \citet{CS}.
 \begin{comment}
@@ -242,9 +242,9 @@ For simplicity, we assume that all actions are admissible in all states.
 Given a choice of an action $a\in \A$ in a state $s\in \S$, the controller incurs a reward (or gain) of $g_a(s)\in [0,1]$
 and the state moves to a next state $s'\in \S$ with probability $p_{a}(s,s')$.
 A \emph{policy} $u$ is a mapping from states to actions.\footnote{For the scope of this paper, it suffices to restrict our attention to such policies as opposed to considering history dependent policies. See Chapter 3, and specifically Corollary 3.3 of \cite{Kall17}.}
-When a policy is followed, the state sequence evolves as a Markov chain with transition probabilities given by $P_u$ matrix whose $(s,s')$th entry is $P_{u(s)}(s,s')$. Along the way the rewards generated from $g_u$ defined by $g_u(s) \defeq g_{u(s)}(s)$.
+When a policy is followed, the state sequence evolves as a Markov chain with transition probabilities given by $P_u$ matrix whose $(s,s')$th entry is $P_{u(s)}(s,s')$. Along the way the rewards are generated from $g_u$ defined by $g_u(s) \defeq g_{u(s)}(s)$.
 The \emph{value} of following a policy from a starting state $s$ is denoted by $J_u(s)$ and is defined as
-the expected total reward discounted reward. Thus,
+the expected total discounted reward. Thus,
 %The probability transition kernel $P$ collects the probabilities $p_a(s,s')$ of transitioning from state $s$ to state $s'$ under the action $a$ for all possible $s,s'\in S$ and $a\in A$. We denote the reward (or gain) obtained for performing action $a\in A$ in state $s\in S$ by $g_a(s)$.
 
 %\textbf{Policy:} A stationary deterministic policy(SDP), or simply a policy, is a map $u\colon S\ra A$ that specifies for each state what action to select in that state. Under an SDP, an MDP is a Markov chain whose probability transition matrix is denoted by $P_u$.
@@ -258,7 +258,7 @@ J_u(s)\defeq \sum_{t=0}^\infty \alpha^t (P_u^t g_u)(s)\,,\nn
 where  $\alpha \in (0,1)$ is the so-called discount factor. % and $s_{t+1} \sim p_{a_t}(s_t,\cdot)$, $t\ge 0$.
 We call $J_u$ the \emph{value function} of policy $u$. The value function of a policy satisfies the fixed-point equation $J_u = T_u J_u$ where the affine-linear operator $T_u$ is defined by $T_u J = g_u + \alpha P_u J$.
 An \emph{optimal policy}, is one that maximizes the value simultaneously for all initial states.
-The \emph{optimal value function} $J^*$ is defined by $J^*(s) = \max_u J_u(s)$ and is known to be the solution of the fixed-point equation $J^* = T J^*$ where the operator $T$ is defined by $(TJ)(s) = \max_u (T_u J)(s)$, $s\in \S$, i.e., the maximization is component-wise. Optimal policies exist and in fact any policy $u$ such that the equation $T_u J^* = T J^*$ holds is optimal (e.g., Corollary 3.3 of \cite{Kall17}). A policy $u$ is said to be \emph{greedy} with respect to (w.r.t.) $J$ if $T_u J = T J^*$. Thus, any policy that is greedy w.r.t. $J^*$ is optimal.
+The \emph{optimal value function} $J^*$ is defined by $J^*(s) = \max_u J_u(s)$ and is known to be the solution of the fixed-point equation $J^* = T J^*$ where the operator $T$ is defined by $(TJ)(s) = \max_u (T_u J)(s)$, $s\in \S$, i.e., the maximization is component-wise. Optimal policies exist and in fact any policy $u$ such that the equation $T_u J^* = T J^*$ holds is optimal (e.g., Corollary 3.3 of \cite{Kall17}). A policy $u$ is said to be \emph{greedy} with respect to (w.r.t.) $J$ if $T_u J = T J$. Thus, any policy that is greedy w.r.t. $J^*$ is optimal.
 
 \if0
 The value functions $J_u$ is an elements of $\R^S$. In what follows it will be useful for us to treat it as an $n$-dimensional vector, i.e., an element of $\R^n$, effectively identifying $\R^S$ with $\R^n$ in the natural way. Similarly we identify $\R^{nd}$ with $\R^{S\times A}$, where $d=|A|$.
@@ -376,7 +376,7 @@ is obtained by adding the linear constraints $J = \sum_{i=1}^k r_i \phi_i$ to th
 As noted by \citet{SchSei85}, the linear program is feasible as long as $\one$, defined as the vector with all components being identically equal to one, is in the span of $\{\phi_1,\dots,\phi_k\}$.
 \emph{For the purpose of computations, it is assumed that the values $c^\top \phi_i$, $i=1,\dots, k$ and the values $(P_a \phi_i)(s)$ and $g_a(s)$ can be accessed in constant time.}
 This assumption can be relaxed to assuming that one can access $g_a(s)$ and $\phi_i(s)$ for any $(s,a)$ in constant time, as well as to that one can efficiently sample from $c$, from $P_a(s,\cdot)$ for any $(s,a)$ pair,
-but the details of this are the beyond the scope of the present work. As shown by \citet{ALP}, if $\ralp$ denotes the solution to the above ALP then for $\Jalp \doteq \sum_i \ralp(i) \phi_i \doteq \Phi \ralp$ it holds that $\norm{\Jalp - J^*}_{1,c} \le \frac{2 \epsilon}{1-\alpha}$ provided $c^\top 1 = 1$ and where $\epsilon = \inf_r \norm{ J^* - \Phi r }_\infty$ is the error of approximating the optimal value with the span of the basis functions $\phi_1,\dots,\phi_k$ and $\norm{J}_\infty = \max_s |J(s)|$ is the maximum norm and $\Phi \in \Re^{S\times k}$ is the matrix formed by $(\phi_1,\dots,\phi_k)$. That the error of approximating $J^*$ with $\Jalp$ is $O(\epsilon)$ is significant: The user can focus on finding a good basis, leaving the search for the ``right'' coefficients to a linear program solver.
+but the details of this are beyond the scope of the present work. As shown by \citet{ALP}, if $\ralp$ denotes the solution to the above ALP then for $\Jalp \doteq \sum_i \ralp(i) \phi_i \doteq \Phi \ralp$ it holds that $\norm{\Jalp - J^*}_{1,c} \le \frac{2 \epsilon}{1-\alpha}$ provided $c^\top 1 = 1$ and where $\epsilon = \inf_r \norm{ J^* - \Phi r }_\infty$ is the error of approximating the optimal value with the span of the basis functions $\phi_1,\dots,\phi_k$ and $\norm{J}_\infty = \max_s |J(s)|$ is the maximum norm and $\Phi \in \Re^{S\times k}$ is the matrix formed by $(\phi_1,\dots,\phi_k)$. That the error of approximating $J^*$ with $\Jalp$ is $O(\epsilon)$ is significant: The user can focus on finding a good basis, leaving the search for the ``right'' coefficients to a linear program solver.
 
 While solving the ALP can be significantly cheaper than solving the LP underlying the MDP
 and thus it can be advantageous for moderate-scale MDPs,
@@ -402,7 +402,7 @@ Note that this results in a linear program with $k$ variables and $m$ constraint
 where $W_a = (w_{1,a},\dots,w_{m,a}) \in \Re_+^{S \times m}$.
 Note that the $(i,j)$th entry of the $m\times k$ constraint matrix of the resulting LP is
 $\sum_a  w_{i,a}^\top  \phi_j - \alpha \sum_a w_{i,a}^\top P_a \phi_j$ and assuming that $(w_{i,a})_{a}$ has $p$ nonzero
-elements, this can be calculated in $O( p )$ time, making the total cost of obtaining the constraint matrix to be $O(mkp)$ regardless the value of $S$ and $A$. \todoc{Somewhere discuss that the cost of obtaining a policy will depend on $A$.
+elements, this can be calculated in $O( p )$ time, making the total cost of obtaining the constraint matrix to be $O(mkp)$ regardless of the values of $S$ and $A$. \todoc{Somewhere discuss that the cost of obtaining a policy will depend on $A$.
 We can also discuss how $A$ could be folded into states.}
 
 We will call the LP in \eqref{grlp} the \emph{linearly relaxed approximate linear program (LRALP)}.
@@ -475,8 +475,8 @@ where $P_{u^*}$ is the probability transition matrix under $u^*$ ($P_{u^*}(s,s')
 The purpose of this section is to present our main results.
 Let $\rlr$ be a solution to the LRALP given by \eqref{grlp}
 and let $\Jlr = \Phi \rlr$. When multiple solutions exist, we can choose any of them.
-For the result, we assume that the LRALP is not unbounded, and hence a solution exist. In fact, we will assume something much stronger. The discussion of why our assumptions are reasonable and how to ensure that they hold is postponed to after the presentation of our results.
-Our main results bounds the error $\norm{J^* - \Jlr}_{1,c}$.
+For the result, we assume that the LRALP is not unbounded, and hence a solution exists. In fact, we will assume something much stronger. The discussion of why our assumptions are reasonable and how to ensure that they hold is postponed to after the presentation of our results.
+Our main results bound the error $\norm{J^* - \Jlr}_{1,c}$.
 
 The bound is given in terms of the approximation error of $J^*$ with the basis functions $\Phi= (\phi_1,\dots,\phi_k)$, as well as the deviation between two functions, $\Jalpo,\Jlro: \S \to \Re$, which we define next. In particular,
 \begin{align*}
@@ -540,7 +540,7 @@ The outer lightly shaded region corresponds to GRLP constraints and the inner da
 Assume that $c\in \Re_+^S$ is such that $1^\top c = 1$ and that $W \in \Re_+^{SA\times m}$ is nonnegative valued.
 Let $\psi\in \Re_+^S$ be in the column span of $\Phi$ and assume that the $\alpha$-discounted stability coefficient of $\psi$ is $\beta_\psi<1$. 
 Let $\eps = \inf_{r\in \Re^k}\norm{J^*-\Phi r}_{\infty,\psi}$ 
-be the error of approximating $J^*$ using the basis functions in $\Phi$.
+be the error in approximating $J^*$ using the basis functions in $\Phi$.
 Then,
 \begin{align*}
 \norm{J^*-\hj}_{1,c} \leq 
@@ -588,7 +588,7 @@ Thus, to ensure boundedness of $\Jlro$,
 the chosen states should be selected to ``conicly cover'' all the vectors in $\phi(\S)\subset \Re^k$.%
 \footnote{The same implies that, under the same condition on $W$, boundedness of the LRALP 
 holds if and only if $\sum_s c(s) \phi(s)$ is in the conic span of $\phi(\S_0)$. Note that this is easy to fulfill
-if the support of $c$ has a small cardinality by add all states in the support of $c$ to $\S_0$.
+if the support of $c$ has a small cardinality by adding all the states in the support of $c$ to $\S_0$.
 }
 
 The next theorem shows that magnitudes of the coefficients used in the conic cover control the size of 
@@ -691,13 +691,13 @@ In this case it is not hard to verify that if $\S_{i0}$ is such that $h_i(\S_i)$
 $\phi(\S)$ is also in the conic span of $\S_0 \doteq \S_1 \times \{ s_{20} \} \cup \{ s_{10} \} \times \S_2$.
 The point is that $|\S_0| \le |\S_1| + |\S_2|$, which is a tolerable increase of growth.
 This example is not hard to generalize to more general, ANOVA-like basis expansions. The moral
-is that as long as their limited order of interaction (which is usually necessary for information theoretic reasons as well),
+is that as long as there is limited order of interaction (which is usually necessary for information theoretic reasons as well),
 the number of constraints may grow moderately with the number of factors (dimensionality) of the state space.
 
 In some cases, finding a conic cover with a small cardinality is not possible. 
 This can already happen in simple examples such as when $\S = \{1,\dots,S\}$ (as before) and
 $\phi( s ) = (1,s,s^2)^\top$. In this case, the only choice is $\S_0 = \S$. 
-In examples similar to this one one possibility is to quantize the range of $\phi$, which may  loose
+In examples similar to this, one possibility is to quantize the range of $\phi$, which may lose
 little on approximation quality, while it creates the opportunity 
 to construct a small cardinality conic cover.
 
@@ -705,7 +705,7 @@ Note that the bound of \cite{CS} and our main result can be seen as largely comp
 Recall that \citeauthor{CS} consider adding an extra constraint $r\in \N$, while they propose to select all $A$ constraints
 from the ALP corresponding to $m$ states chosen at random from some distribution $\mu$. 
 Then, with high probability,
-they show that, provided that $\ralp \in \N$,
+they show that, provided $\ralp \in \N$,
  the extra price paid for relaxing the constraints of the ALP is $O( \rho \epsilon_{\N} k/m)$,
  where $\rho = \max_{s} \frac{\mu^*(s)}{\mu(s)}$, $\mu^* = (1-\alpha)c^\top (I-\alpha P_{u^*})^{-1}$, $u^*$ is an optimal policy,
 and $\epsilon_{\N} = \sup_{r\in \N} \norm{J^*-\Phi r}_{\infty,\psi}$.%
@@ -757,7 +757,7 @@ Note that for the proof it suffices to consider the case when $\Jlro$ is finite-
 Also, recall that it was assumed that $\psi$ lies in the column space of $\Phi$, while $\beta_\psi$, the $\alpha$-discounted stability of $\psi$ w.r.t. the MDP (cf. \eqref{eq:betadef}) is strictly below one. We will let $r_0\in \R^k$ be such that $\psi = \Phi r_0$.
 We also assumed that the matrix $W$ is nonnegative valued, while $c$ specifies a probability distribution over $\S$: $\sum_s c(s) = 1$ and $c\in \R_+^S$.
 
-The operator $\hg$ are defined as follows: For $J\in \Re^S$, $s\in \S$,
+The operator $\hg$ is defined as follows: For $J\in \Re^S$, $s\in \S$,
 \begin{align*}
 %(\G J)(s) & = \min\{ r^\top \phi(s) \,:\, \Phi r \ge T J ,\, r\in \Re^k \}\,,\\
 (\hg J)(s) & = \min\{ r^\top \phi(s) \,:\, W^\top E \Phi r \ge W^\top E H J ,\, r\in \Re^k\}\,.
@@ -787,7 +787,7 @@ The following are equivalent:
 \end{lemma}
 %The proof, which essentially copies Lemma 3.1 of \cite{Kall17}, is given for completeness:
 \begin{proof}
-The proof is  trivial modification of the proof of Lemma 3.1 of \cite{Kall17} and is thus left as an exercise.
+The proof is a trivial modification of the proof of Lemma 3.1 of \cite{Kall17} and is thus left as an exercise.
 \if0
 %Note first that for any $\eps\ge 0$, $-\eps \psi \le J - J' \le \eps \psi$ implies that $\norm{J-J'}_{\mn} \le \eps$.
 Introduce $\cdot$ to denote elementwise products: Thus, $(\psi \cdot J)(s) = \psi(s) J(s)$.
@@ -1003,7 +1003,7 @@ We consider the decomposition
 \label{eq:maindec}
 \norm{\Jlr-J^*}_{1,c} = c^\top\!( \Jlr - J^* ) + 2c^\top\!( \Jlr - J^* )^-\,.
 \end{align}
-Let $\hv$ be the fixed point $\hg$. We know claim the following:
+Let $\hv$ be the fixed point of $\hg$. We now claim the following:
 \begin{claim}
 We have $\Jlr \ge \hv$, $c^\top \Jalp \ge c^\top \Jlr$.
 \end{claim}
@@ -1025,7 +1025,7 @@ we have $V_0(s)  = r_s^\top \phi(s)$. %$(\Phi r_s)(s)$.
 Also, since $\hj(s) \ge r_s^\top \phi(s)$, % (\Phi r_s)(s)$,$s\in \S$
 it follows that $\hj\geq V_0$.
 Now,  fix some $s\in \S$ and
-define $r'_{e_s,V_0}$ be the solution to the linear program defining $(\hg V_0)(s)$.
+let $r'_{e_s,V_0}$ be the solution to the linear program defining $(\hg V_0)(s)$.
 We need to show that $V_1(s)=(\hg V_0)(s) = ( r'_{e_s,V_0})^\top \phi(s) \leq V_0(s)$.
 By the definition of $r'_{e_s,V_0}$ we know that $( r'_{e_s,V_0})^\top \phi(s) \le r^\top \phi(s)$ %$(\Phi r)(s)$
 holds for any $r\in \Re^k$ such that $W^\top E \Phi r \ge W^\top H V_0$.
@@ -1426,7 +1426,7 @@ The results are shown in the figures below: The right-hand-side figure shows the
 while the left-hand-side figure shows their value functions.
 Since constraint sampling (CS) produces randomized results,
 we repeated the simulations 10 times.
-The results in all cases were quite similar except for one ``bad case'' for CS , hence we show the plot for a typical run.
+The results in all cases were quite similar except for one ``bad case'' for CS, hence we show the plot for a typical run.
 As can be seen from the figure, choosing the constraints to (approximately) satisfy the constraint of the theoretical results
 reliably produces better results: In fact, the value functions $J^*$ and $J_{LRA}$ are mostly on the top of each other.
 While these results are only meant for illustration,
