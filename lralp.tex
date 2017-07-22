@@ -28,7 +28,7 @@
 Edmonton, Alberta, Canada T6G 2E8. E-mail: $\{$cnarayan, csaba.szepesvari$\}$@ualberta.ca}
 \thanks{$^\star$Department of Computer
 Science and Automation, Indian Institute of Science, Bangalore 560012.
-E-mail: $\{$ shalabh$\}$@iisc.ac.in}
+E-mail: shalabh@iisc.ac.in}
 }
 % The \author macro works with any number of authors. There are two commands
 % used to separate the names and addresses of multiple authors: \And and \AND.
@@ -1400,7 +1400,7 @@ $u_{\cdot}(s)=\argmin_{a\in A} g_a(s)+\sum_{s'\in S}p_a(s,s')\hat{J}_{\cdot}(s')
 We now describe LRA and CS.\\
 \textbf{LRA}:  Here we let $c=e_{s'}$ and choose constraint corresponding to state $s'$ to ensure feasibility of LRALP. We choose $5$ more constraints corresponding to states $1,200,400,600,800,999$ (uniformly spaced across the state space) and compute $\hat{J}_{LRA}=\hat{J}_{e_{s'}}$. 
 The number of constraints is kept very small as a way of emulating that in large-scale problems we cannot expect a dense covering of the state-space when selecting the constraints.\\
-\textbf{CS}: Here we let $c_{s'}(s)=(1-\alpha)(\alpha)^{|s'-s|}$ and normalize $c$, sample $m=6$ constraints randomly using $c$ and compute $\hat{J}_{CS}=\hat{J}_{c_{s'}}$. Since the optimal sampling distribution is unknown, we sample from $c$ which assigns higher weights to nearby states.
+\textbf{CS}: Here we let $c_{s'}(s)=(1-\alpha)(\alpha)^{|s'-s|}$ and normalize $c_{s'}$, sample $m=6$ constraints randomly using $c_{s'}$ and compute $\hat{J}_{CS}=\hat{J}_{c_{s'}}$. Since the optimal sampling distribution is unknown, we sample from $c_{s'}$ which assigns higher weights to nearby states.
 \begin{comment}
 In this section, we show via an example in the domain of controlled queues the consequences of \cref{conetheorm},
 which bounded the error when the constraints are chosen based on selecting a set of representative states
