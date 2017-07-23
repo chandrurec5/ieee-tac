@@ -1,0 +1,24 @@
+Reviewer Comment: "The work is, as I said previously, good as it gives a nice theoretical
+analysis. The introduction is a pretty nice review and a succinct summary of this line of work in MDPs."
+
+Our Response: We thank the reviewer for the positive comments.
+
+Reviewer Comment: "Nevertheless, the writing of the main body is still difficult to
+follow. The authors may further work on simplifying the manuscript presentation. 
+Though they have explained almost all the assumption in intuitive way
+now, so I am satisfied with the authors response."
+
+Our Response: From the comments, we are not clear what we should do further. We have also proof read
+the whole paper and corrected typos that were there in the previous version.
+
+Reviewer Comment: "Though I do not think that the experiments in the paper represent a
+main part of the contribution, this section seems weak with respect to
+the rest of the contribution and the setup could be explained  in a
+better way."
+
+Our Response: We have now rewritten the experiments section and improved the writing and explanations there.
+
+Reviewer Comment: "I think the paper is ready with minor modifications."
+
+Our Response: Thank you for your positive comments.
+
