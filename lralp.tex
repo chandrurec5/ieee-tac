@@ -23,7 +23,7 @@
 
 \title{A Linearly Relaxed Approximate Linear Program for Markov Decision Processes}
 \author{Chandrashekar Lakshminarayanan$^\dagger$, Shalabh Bhatnagar$^\star$,
- and Csaba Szepesvari$^\dagger$
+ and Csaba Szepesv\'ari$^\dagger$
 \thanks{$^\dagger$Department of Computing Science, University of Alberta,
 Edmonton, Alberta, Canada T6G 2E8. E-mail: $\{$cnarayan, csaba.szepesvari$\}$@ualberta.ca}
 \thanks{$^\star$Department of Computer
@@ -699,11 +699,10 @@ the number of constraints may grow moderately with the number of factors (dimens
 In some cases, finding a conic cover with a small cardinality is not possible. 
 This can already happen in simple examples such as when $\S = \{1,\dots,S\}$ (as before) and
 $\phi( s ) = (1,s,s^2)^\top$. In this case, the only choice is $\S_0 = \S$. 
-In examples similar to this one, one possibility is to quantize the range of $\phi$: While this may worsen
-the approximation quality a bit, it creates the opportunity 
-to construct a small cardinality conic cover.
+In examples similar to this one, one possibility is to quantize the range of $\phi$ to trade a bit of the
+ approximation quality away for reducing the cardinality of a conic cover.
 
-Note that the bound of \cite{CS} and our main result can be seen as largely complementary. 
+The bound developed by \citet{CS} and our main result can be seen as largely complementary. 
 Recall that \citeauthor{CS} consider adding an extra constraint $r\in \N$, while they propose to select all $A$ constraints
 from the ALP corresponding to $m$ states chosen at random from some distribution $\mu$. 
 Then, with high probability,
@@ -1380,27 +1379,34 @@ The action set $\A=\{1,\ldots,A\}$ is related to the service rates.
 We let $s_t$ denote the state at time $t$. 
 The state at time $t+1$ when action $a_t \in \A$ is chosen is given by $s_{t+1}= s_{t}+1$ with probability $p$, 
 $s_{t+1}= s_{t}-1$ with probability $q(a_t)$ and $s_{t+1}= s_t$, with probability $(1-p-q(a_t))$. 
-For states $s_t=0$ and $s_t=S-1$, the system dynamics is given by $s_{t+1}= s_{t}+1$ 
-with probability $p$ when $s_t=0$ and $s_{t+1}=s_t-1$ with probability $q(a_t)$ when $s_t=S-1$. 
+When $s_t=0$, $s_{t+1} = s_t$ with probability $1-p$ and $s_{t+1}=s_t+1$ with probability $p$,
+while when $s_t = S-1$, $s_{t+1} = s_t$ with probability $1-q(a_t)$ and $s_{t+1} = s_t-1$ with probability $q(a_t)$.
+%For states $s_t=0$ and $s_t=S-1$, the system dynamics is given by $s_{t+1}= s_{t}+1$ 
+%with probability $p$ when $s_t=0$ and $s_{t+1}=s_t-1$ with probability $q(a_t)$ when $s_t=S-1$. 
 The service rates satisfy $0<q(1)\leq \ldots\leq q(A)<1$ with $q(A)>p$ so as to ensure `stabilizability' of the queue.
-The reward associated with  action $a \in \A$ and state $s\in \S$ is given by $g_a(s)=-(s/N+q(a)^3)$
-(the idea here is to penalize higher queue lengths and higher service rates). \todoc{Was this used by others; if so,
-cite them!}
+%Following \citet{ALP}, 
+The reward associated with action $a \in \A$ and state $s\in \S$ is given by $g_a(s)=-(s/N+q(a)^3)$.
+The idea here is to penalize higher queue lengths and higher service rates.
 We ran our experiments for $S=1000$, $A=4$ with $q(1)=0.2$, $q(2)=0.4$, $q(3)=0.6$, $q(4)=0.8$, $p=0.2$ and $\alpha=1-\frac{1}{S}$. The moderate size of $S=1000$ enabled us to compute the exact value of $J^*$ (the most expensive part of the computation).
-We made use of polynomial features in $\Phi$ (i.e., $1,s,\ldots,s^{k-1}$)
-since they are known to work reasonably well for this domain \cite{ALP}.
+%Following previous work (e.g., \cite{ALP}),
+We made use of polynomial features in $\Phi$ (i.e., $1,s,\ldots,s^{k-1}$).
 Note that the conic span conditions will only be met with some lag, unless all the constraints are selected.
-Hence, these features allow us to test the limits of the theory. 
+Hence, these features allow us to test the robustness of our theory. 
 We chose $k=4$, a low number, to counteract  that the MDP is small scale. 
 % (i.e., we used $1, s,s^2$ and $s^3$ as basis vectors).\\
-At any given state $s$ we formulate LRALPs to compute the approximate values $\hat{J}(s')$ at the next states $s'$(except for states $s=0$ and $s=999$ each state has two next states). While formulating the LRALPs, we adopt two different constraint selection strategies namely LRA and CS, where  LRA is the one based on the \emph{conic} covering idea discussed in \Cref{mainresults} preceding \Cref{conetheorm}, and CS is based on constraint sampling \cite{CS}. Using the output of the LRALPs we compute \emph{lookahead} policies as 
-$u_{\cdot}(s)=\argmin_{a\in A} g_a(s)+\sum_{s'\in S}p_a(s,s')\hat{J}_{\cdot}(s')$, where $\cdot$ is either LRA or CS.  
+At any given state $s$ we formulate LRALPs to compute the approximate values $\hat{J}(s')$ at the next states $s'$ (except for states $s=0$ and $s=999$ each state has two next states). While formulating the LRALPs, we adopt two different constraint selection strategies namely LRA and CS, described below.
+%where  LRA is the one based on the \emph{conic} covering idea discussed in \Cref{mainresults} preceding \Cref{conetheorm}, and CS is based on constraint sampling \cite{CS}. 
+Using the output of the LRALPs we compute \emph{lookahead} policies as 
+$u_{\star}(s)=\argmin_{a\in A} g_a(s)+\sum_{s'\in S}p_a(s,s')\hat{J}_{\star}(s')$, where $\star$ is either LRA or CS.  
 %Except for the corner states i.e., $s=0$ and $s=999$, each state $0<s<S-1$ has two next states namely $s'=s-1$ and $s'=s+1$. We formulate two separate LRALPs (or just one LRALP for $s=0$ and $s=S-1$) for next states. 
 %We evaluate LRA and CS by comparing the \emph{lookahead} policies they generate. The lookahead policy is local in nature, and the action at state $s$ is obtained by computing the approximate value functions of the next states and selecting the action that leads to the larger estimated value. 
 We now describe LRA and CS.\\
-\textbf{LRA}:  Here we let $c=e_{s'}$ and choose constraint corresponding to state $s'$ to ensure feasibility of LRALP. We choose $5$ more constraints corresponding to states $1,200,400,600,800,999$ (uniformly spaced across the state space) and compute $\hat{J}_{LRA}=\hat{J}_{e_{s'}}$. 
+\textbf{LRA}:  Here we let $c=e_{s'}$ and choose the constraints corresponding to state $s'$ to ensure feasibility of LRALP. \todoc{How come this ensures feasibility?}
+We choose $5$ more constraints corresponding to states $1,200,400,600,800,999$ (uniformly spaced across the state space) and compute $\hat{J}_{LRA}=\hat{J}_{e_{s'}}$. 
 The number of constraints is kept very small as a way of emulating that in large-scale problems we cannot expect a dense covering of the state-space when selecting the constraints.\\
-\textbf{CS}: Here we let $c_{s'}(s)=(1-\alpha)(\alpha)^{|s'-s|}$ and normalize $c_{s'}$, sample $m=6$ constraints randomly using $c_{s'}$ and compute $\hat{J}_{CS}=\hat{J}_{c_{s'}}$. Since the optimal sampling distribution is unknown, we sample from $c_{s'}$ which assigns higher weights to nearby states.
+\textbf{CS}: Here we let $c_{s'}(s)=\zeta (1-\alpha)(\alpha)^{|s'-s|}$ and choose $\zeta>0$ so that $c_{s'}^\top \one =1$. We then sample $m=6$ constraints randomly from $c_{s'}$ and compute $\hat{J}_{CS}=\hat{J}_{c_{s'}}$. 
+The idea is that $c_{s'}$ assigns higher weights to nearby states, while $c_{s'}$ provides a reasonable approximation
+to the ideal, but intractable distribution described in \citet{CS}.
 \begin{comment}
 In this section, we show via an example in the domain of controlled queues the consequences of \cref{conetheorm},
 which bounded the error when the constraints are chosen based on selecting a set of representative states
@@ -1427,12 +1433,12 @@ $u_{CS}(s)=\argmin_{a\in A} g_a(s)+\sum_{s'\in S}p_a(s,s')\hat{J}_{c_{s'}}(s')$.
 The results are shown in the figures below: The right-hand-side figure shows the policies computed,
 while the left-hand-side figure shows their value functions.
 Since constraint sampling (CS) produces randomized results,
-we repeated the simulations 10 times.
+we repeated the computations $10$ times.
 The results in all cases were quite similar except for one ``bad case'' for CS, hence we show the plot for a typical run.
 As can be seen from the figure, choosing the constraints to (approximately) satisfy the constraint of the theoretical results
 reliably produces better results: In fact, the value functions $J^*$ and $J_{LRA}$ are mostly on the top of each other.
 While these results are only meant for illustration,
-we expect that in larger domains it becomes even more important to select the constraints appropriately.
+we expect that in larger domains it becomes even more important to select the constraints in a systematic manner.
 However, the study of this is left for future work.
 %\FloatBarrier
 \begin{figure}[htp]
@@ -1467,12 +1473,14 @@ However, the study of this is left for future work.
 \end{tabular}
 }
 \end{minipage}
+\caption{Simulation result: The left subfigure shows the value function of the computed policies, the right subfigure
+shows the policies themselves.}
 \end{figure}
 
 %!TEX root =  autocontgrlp.tex
 \section{Conclusion}
-In this paper, we introduced and analyzed the linearly relaxed approximate linear program (LRALP) whose constraints were obtained as positive linear combination of the original constraints of the ALP.
-The main novel contribution is a theoretical result which gives a geometrically interpretable bound on the performance loss due to relaxing the constraint sets. Possibilities for future work include extending the results to other forms of approximate linear programming in MDPs (e.g., \citep{SALP}), exploring the idea of approximating dual variables and
+In this paper, we introduced and analyzed the linearly relaxed approximate linear program (LRALP) whose constraints were obtained as nonnegative linear combination of the original constraints of the ALP.
+The main novel contribution is a theoretical result that gives a geometrically interpretable bound on the performance loss due to relaxing the constraints. Possibilities for future work include extending the results to other forms of approximate linear programming in MDPs (e.g., \citep{SALP}), exploring the idea of approximating dual variables and
 designing algorithms that use the newly derived results to actively compute what constraints to select. \todoc{Other large scale LP}
 \printbibliography
 \newpage
