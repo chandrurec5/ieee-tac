@@ -1370,43 +1370,45 @@ Let $r_{e_s,J^*}$ and ${r}'_{e_s,J^*}$ be solutions to the linear programs in \e
 \begin{comment}
 Here we compare two different constraint selection strategies namely LRA and CS, where  LRA is the one based on the \emph{conic} cover principle discussed in \Cref{mainresults} preceding \Cref{conetheorm}, and CS is based on constraint sampling an approach studied in prior literature \cite{CS}. We run the experiments in a queuing model similar to one in Section~$5.2$ of \cite{ALP}. %In what follows, we describe the queuing model, choice of basis and the details of the two constraint selection strategies (further preliminary experimental results have been reported in \cite{aaaipaper}).
 \end{comment}
-We consider a (simple) small scale queuing model (similar to one in Section~$5.2$ of \cite{ALP}) so that we can compare with the optimal policy.
-At the same time, we will use a small number of basis functions and constraints, to ``stress-test'' the algorithm.
+We consider a small scale queuing model similar to one in Section~$5.2$ of \cite{ALP}.
+The small scale helps to compare with the optimal policy.
+To stress-test the algorithms, we will use a correspondingly small LRALP.
 The queuing system has a single queue with random arrivals and departures. 
-The state of the system is the queue length with the state space given by $\S=\{0,\ldots,S-1\}$, 
-where $S-1$ is the buffer size of the queue. 
-The action set $\A=\{1,\ldots,A\}$ is related to the service rates. 
-We let $s_t$ denote the state at time $t$. 
-The state at time $t+1$ when action $a_t \in \A$ is chosen is given by $s_{t+1}= s_{t}+1$ with probability $p$, 
-$s_{t+1}= s_{t}-1$ with probability $q(a_t)$ and $s_{t+1}= s_t$, with probability $(1-p-q(a_t))$. 
-When $s_t=0$, $s_{t+1} = s_t$ with probability $1-p$ and $s_{t+1}=s_t+1$ with probability $p$,
-while when $s_t = S-1$, $s_{t+1} = s_t$ with probability $1-q(a_t)$ and $s_{t+1} = s_t-1$ with probability $q(a_t)$.
-%For states $s_t=0$ and $s_t=S-1$, the system dynamics is given by $s_{t+1}= s_{t}+1$ 
-%with probability $p$ when $s_t=0$ and $s_{t+1}=s_t-1$ with probability $q(a_t)$ when $s_t=S-1$. 
+The state of the system is the queue length, an element of $\S=\{0,\ldots,S-1\}$.
+Action $a_t\in \A = \{1,\dots,A\}$ sets service rates: 
+Assuming that at time $t$ the state is $s_t$, $s_{t+1} = \max(\min( s_t + \Delta_{t+1}, S-1 ),0)$, where $\Delta_{t+1}\in \{-1,0,+1\}$ with respective probabilities $q(a_t),1-q(a_t)-p$ and $p$.
 The service rates satisfy $0<q(1)\leq \ldots\leq q(A)<1$ with $q(A)>p$ so as to ensure `stabilizability' of the queue.
 %Following \citet{ALP}, 
-The reward associated with action $a \in \A$ and state $s\in \S$ is given by $g_a(s)=-(s/N+q(a)^3)$.
-The idea here is to penalize higher queue lengths and higher service rates.
-We ran our experiments for $S=1000$, $A=4$ with $q(1)=0.2$, $q(2)=0.4$, $q(3)=0.6$, $q(4)=0.8$, $p=0.2$ and $\alpha=1-\frac{1}{S}$. The moderate size of $S=1000$ enabled us to compute the exact value of $J^*$ (the most expensive part of the computation).
+The reward associated with action $a \in \A$ and state $s\in \S$ is given by $g_a(s)=-((s/N)^2+q(a)^3)$.
+\todoc{I think in the code you square the state-cost.}
+We ran our experiments for $S=1000$, $A=4$ with $q(1)=0.2$, $q(2)=0.4$, $q(3)=0.6$, $q(4)=0.8$, $p=0.2$ and $\alpha=1-\frac{1}{S}$. 
+%The moderate size of $S=1000$ enabled us to compute the exact value of $J^*$ (the most expensive part of the computation).
 %Following previous work (e.g., \cite{ALP}),
-We made use of polynomial features in $\Phi$ (i.e., $1,s,\ldots,s^{k-1}$).
-Note that the conic span conditions will only be met with some lag, unless all the constraints are selected.
-Hence, these features allow us to test the robustness of our theory. 
+The $i$th basis function is $\phi_i(s) = s^i$, $i\in \{0,1,\dots,k-1\}$.
+Note that the conic span conditions will only be met with some lag, unless \emph{all} constraints are selected.
+Hence, these features test the robustness of our theory. 
 We chose $k=4$, a low number, to counteract  that the MDP is small scale. 
 % (i.e., we used $1, s,s^2$ and $s^3$ as basis vectors).\\
-At any given state $s$ we formulate LRALPs to compute the approximate values $\hat{J}(s')$ at the next states $s'$ (except for states $s=0$ and $s=999$ each state has two next states). While formulating the LRALPs, we adopt two different constraint selection strategies namely LRA and CS, described below.
+At any given state $s$ we formulate LRALPs to compute the approximate values $\hat{J}(s')$ at all the next states $s'$ (except at the boundaries, each state has two next states). 
+While formulating the LRALPs, we adopt different constraint selection strategies, which we call LRA, CS and CS-ideal, to be described below.
 %where  LRA is the one based on the \emph{conic} covering idea discussed in \Cref{mainresults} preceding \Cref{conetheorm}, and CS is based on constraint sampling \cite{CS}. 
 Using the output of the LRALPs we compute \emph{lookahead} policies as 
-$u_{\star}(s)=\argmin_{a\in A} g_a(s)+\sum_{s'\in S}p_a(s,s')\hat{J}_{\star}(s')$, where $\star$ is either LRA or CS.  
+$u_{\star}(s)=\argmin_{a\in A} g_a(s)+\sum_{s'\in S}p_a(s,s')\hat{J}_{\star}(s')$, where $\star\in \{ \text{LRA}, \text{CS}, \text{CS-ideal} \}$.
 %Except for the corner states i.e., $s=0$ and $s=999$, each state $0<s<S-1$ has two next states namely $s'=s-1$ and $s'=s+1$. We formulate two separate LRALPs (or just one LRALP for $s=0$ and $s=S-1$) for next states. 
 %We evaluate LRA and CS by comparing the \emph{lookahead} policies they generate. The lookahead policy is local in nature, and the action at state $s$ is obtained by computing the approximate value functions of the next states and selecting the action that leads to the larger estimated value. 
-We now describe LRA and CS.\\
-\textbf{LRA}:  Here we let $c=e_{s'}$ and choose the constraints corresponding to state $s'$ to ensure feasibility of LRALP. \todoc{How come this ensures feasibility?}
-We choose $5$ more constraints corresponding to states $1,200,400,600,800,999$ (uniformly spaced across the state space) and compute $\hat{J}_{LRA}=\hat{J}_{e_{s'}}$. 
-The number of constraints is kept very small as a way of emulating that in large-scale problems we cannot expect a dense covering of the state-space when selecting the constraints.\\
-\textbf{CS}: Here we let $c_{s'}(s)=\zeta (1-\alpha)(\alpha)^{|s'-s|}$ and choose $\zeta>0$ so that $c_{s'}^\top \one =1$. We then sample $m=6$ constraints randomly from $c_{s'}$ and compute $\hat{J}_{CS}=\hat{J}_{c_{s'}}$. 
-The idea is that $c_{s'}$ assigns higher weights to nearby states, while $c_{s'}$ provides a reasonable approximation
-to the ideal, but intractable distribution described in \citet{CS}.
+\newcommand{\cS}{\mathcal{S}}
+Each constraint selection strategy chooses all constraints corresponding to a select number of states $\cS_0$. The strategies thus differ in how $\cS_0$ is chosen. They also differ in the choice of the cost vector $c$.
+In LRA, 
+%We now describe the constraint selection strategies
+ % LRA and CS.\\
+%\textbf{LRA}:  Here 
+we let $c=e_{s'}$ and set $\cS_0 = \{1,200,400,600,800,999,s'\}$. That $s'\in \cS_0$ ensures feasibility. \todoc{How come this ensures feasibility?}
+In CS, we let $c_{s'}(s)=\zeta (1-\alpha)(\alpha)^{|s'-s|}$ and choose $\zeta>0$ so that $c_{s'}^\top \one =1$. We then sample $m=6$ states randomly from $c_{s'}$ to form $\cS_0$.
+%The number of constraints is kept very small as a way of emulating that in large-scale problems we cannot expect a dense covering of the state-space when selecting the constraints.\\
+%\textbf{CS}: Here we let $c_{s'}(s)=\zeta (1-\alpha)(\alpha)^{|s'-s|}$ and choose $\zeta>0$ so that $c_{s'}^\top \one =1$. We then sample $m=6$ constraints randomly from $c_{s'}$ and compute $\hat{J}_{CS}=\hat{J}_{c_{s'}}$. 
+The idea is that $c_{s'}$ assigns higher weights to nearby states, while it provides a reasonable approximation
+to the ``ideal'' distribution that minimizes the upper bound of \citet{CS}.
+This distribution, $c_{s'}=e^\top_{s'}(1-\alpha)(I-\alpha P_{u^*})^{-1}$, is intractable (as $u^*$ is not available), but was used in strategy CS-ideal to provide a strong baseline.
 \begin{comment}
 In this section, we show via an example in the domain of controlled queues the consequences of \cref{conetheorm},
 which bounded the error when the constraints are chosen based on selecting a set of representative states
@@ -1432,15 +1434,17 @@ $u_{CS}(s)=\argmin_{a\in A} g_a(s)+\sum_{s'\in S}p_a(s,s')\hat{J}_{c_{s'}}(s')$.
 \end{comment}
 The results are shown in the figures below: The right-hand-side figure shows the policies computed,
 while the left-hand-side figure shows their value functions.
-Since constraint sampling (CS) produces randomized results,
+Since the constraint sampling strategies produce randomized results,
 we repeated the computations $10$ times.
-The results in all cases were quite similar except for one ``bad case'' for CS, hence we show the plot for a typical run.
+The results in all cases were quite similar except for one ``bad case'' for CS. We show the plot for a ``typical'' run (not a bad one).
 As can be seen from the figure, choosing the constraints to (approximately) satisfy the constraint of the theoretical results
 reliably produces better results: In fact, the value functions $J^*$ and $J_{LRA}$ are mostly on the top of each other.
 While these results are only meant for illustration,
 we expect that in larger domains it becomes even more important to select the constraints in a systematic manner.
-However, the study of this is left for future work.
+The study of this is left for future work.
+%However, the study of this is left for future work.
 %\FloatBarrier
+\if0
 \begin{figure}[htp]
 \begin{minipage}{0.5\textwidth}
 \resizebox{1.0\textwidth}{!}{
@@ -1475,6 +1479,58 @@ However, the study of this is left for future work.
 \end{minipage}
 \caption{Simulation result: The left subfigure shows the value function of the computed policies, the right subfigure
 shows the policies themselves.}
+\end{figure}
+\fi
+\FloatBarrier
+\begin{figure}[htp]
+\begin{center}
+\begin{minipage}{0.5\textwidth}
+\resizebox{1.0\textwidth}{!}{
+\begin{tabular}{cc}
+\begin{tikzpicture}[scale=1,font=\normalsize,]
+\begin{axis}[legend style={at={(0.5,-0.2)}, anchor=north}]
+\addplot[smooth,very thick, mark=diamond, each nth point=100] plot file {./lralp_exp/V_LP};
+\addplot[dashed,very thick, mark=+, each nth point=100] plot file {./lralp_exp/V_pol_CS};
+\addplot[dashed,very thick, mark=o, each nth point=100] plot file {./lralp_exp/V_pol_CS_ideal};
+\addplot[dotted,very thick,mark=square, each nth point=100] plot file {./lralp_exp/V_pol_cone};
+\addlegendentry{$J^*$};
+\addlegendentry{$J_{CS}$};
+\addlegendentry{$J_{CS-ideal}$};
+\addlegendentry{$J_{LRA}$};
+
+\end{axis}
+\end{tikzpicture}
+
+&
+\begin{tikzpicture}[scale=1,font=\normalsize]
+\begin{axis}[legend style={at={(0.5,-0.2)}, anchor=north}]
+\addplot[very thick] plot file {./lralp_exp/policy};
+\addplot[dashed,very thick] plot file {./lralp_exp/policy_CS};
+\addplot[dashed, very thick, mark=+, each nth point=10] plot file {./lralp_exp/policy_CS_ideal};
+\addplot[dotted,very thick] plot file {./lralp_exp/policy_cone};
+\addlegendentry{$u^*$};
+\addlegendentry{$u_{CS}$};
+\addlegendentry{$u_{CS-ideal}$};
+\addlegendentry{$u_{LRA}$};
+
+\end{axis}
+\end{tikzpicture}
+
+\end{tabular}
+}
+\end{minipage}
+\end{center}
+\caption{Results for a single-queue with polynomial features. 
+On both figures the $x$ axis represents the state space: the length of the queue. For more details, see the text.
+\if0
+The left-hand-side figure shows the value functions
+of the various policies computed, alongside with the optimal value function (higher values are better), while
+the right-hand side subfigure shows the underlying policies.
+``CS'' and ``CS-ideal'' stand for constraint sampling, while LRA stands for choosing the constraints based on
+geometric principles proposed in the paper. For further details, see the text.
+\fi
+}
+\label{fig:results}
 \end{figure}
 
 %!TEX root =  autocontgrlp.tex
